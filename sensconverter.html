@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Game Sensitivity Converter</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #FFF;
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            overflow: auto;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        #convertButton {
+            padding: 12px 25px;
+            font-size: 14px;
+            display: block;
+            margin: 0;
+        }
+        
+        #clearButton,
+        #saveButton {
+            padding: 2px;
+            font-size: 14px;
+            margin-right: 5px;
+            text-decoration: underline;
+            border: none;
+            background-color: transparent;
+        }
+        
+        #clearButton {
+            float: left;
+        }
+        
+        #saveButton {
+            float: right;
+        }
+        
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+        
+        .converted-text {
+            margin-right: 5px;
+        }
+        
+        .converted-value {
+            font-weight: normal;
+        }
+        
+        /* Additional CSS to position the convert button and result */
+        .convert-result-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: column;
+        }
+        
+        /* Additional CSS for scrollable content */
+        .scrollable-content {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #333;
+            margin-top: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .scrollable-content p {
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mobile Game Sensitivity Converter</h1>
+        
+        <label for="source360SensitivityInput">Source Game 360 Sensitivity:</label>
+        <input type="text" pattern="[0-9]+([,.][0-9]+)?" id="source360SensitivityInput" inputmode="decimal">
+        
+        <label for="target360SensitivityInput">Target Game 360 Sensitivity:</label>
+        <input type="text" pattern="[0-9]+([,.][0-9]+)?" id="target360SensitivityInput" inputmode="decimal">
+        
+        <label for="mainSensitivityInput">Source Game Main Sensitivity:</label>
+        <input type="text" pattern="[0-9]+([,.][0-9]+)?" id="mainSensitivityInput" inputmode="decimal">
+        
+        <div class="convert-result-wrapper">
+            <button id="convertButton">Convert Sensitivity</button>
+        
+            <div class="result" id="convertedSensitivity">
+                <span class="converted-text">Converted Sensitivity:</span>
+                <span class="converted-value" id="convertedValue"></span>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="clearButton">Clear Saved Sensitivity</button>
+            <button id="saveButton">Save Sensitivity</button>
+        </div>
+        
+        <div class="scrollable-content">
+            <p>
+                <strong>360 Sensitivity:</strong> 360 sensitivity refers to swiping from the middle of the screen to the complete right, resulting in a perfect 360 degree turn in the game. It represents the sensitivity setting that determines the distance (in degrees) the in-game camera rotates when performing this full swipe.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Load saved sensitivity values from local storage, if available
+        window.addEventListener('DOMContentLoaded', function() {
+            var savedSource360Sensitivity = localStorage.getItem('source360Sensitivity');
+            var savedMainSensitivity = localStorage.getItem('mainSensitivity');
+            
+            if (savedSource360Sensitivity) {
+                document.getElementById('source360SensitivityInput').value = savedSource360Sensitivity;
+            }
+            
+            if (savedMainSensitivity) {
+                document.getElementById('mainSensitivityInput').value = savedMainSensitivity;
+            }
+        });
+        
+        document.getElementById('convertButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            var source360Sensitivity = parseFloat(document.getElementById('source360SensitivityInput').value.replace(',', '.'));
+            var target360Sensitivity = parseFloat(document.getElementById('target360SensitivityInput').value.replace(',', '.'));
+            var mainSensitivity = parseFloat(document.getElementById('mainSensitivityInput').value.replace(',', '.'));
+            
+            if (!isNaN(source360Sensitivity) && !isNaN(target360Sensitivity) && !isNaN(mainSensitivity)) {
+                var result = source360Sensitivity / target360Sensitivity;
+                var convertedSensitivity = mainSensitivity / result;
+                
+                document.getElementById('convertedValue').textContent = convertedSensitivity.toFixed(2);
+            }
+        });
+        
+        document.getElementById('clearButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            localStorage.removeItem('source360Sensitivity');
+            localStorage.removeItem('mainSensitivity');
+            alert('Saved sensitivity values have been cleared.');
+        });
+        
+        document.getElementById('saveButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            var source360Sensitivity = parseFloat(document.getElementById('source360SensitivityInput').value.replace(',', '.'));
+            var mainSensitivity = parseFloat(document.getElementById('mainSensitivityInput').value.replace(',', '.'));
+            
+            if (!isNaN(source360Sensitivity) && !isNaN(mainSensitivity)) {
+                localStorage.setItem('source360Sensitivity', source360Sensitivity);
+                localStorage.setItem('mainSensitivity', mainSensitivity);
+                alert('Sensitivity values have been saved.');
+            }
+        });
+    </script>
+</body>
+</html>
